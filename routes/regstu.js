@@ -2,10 +2,24 @@ const bcrypt = require("bcrypt");
 const { Student, validateStu } = require("../models/student");
 const express = require("express");
 const router = express.Router();
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function(req,file,cb){
+    cb(null, './uploads/');
+  },
+  filename: function(req,file,cb){
+    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
+  }
+})
+const upload = multer({storage: storage});
+
+
+
 
 //FOR REGISTRATION OF Student
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single('resume'),async (req, res) => {
+  console.log(req.file);
   const { error } = validateStu(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
@@ -22,6 +36,7 @@ router.post("/", async (req, res) => {
     tenPercentage: req.body.tenPercentage,
     twelvePercentage: req.body.twelvePercentage,
     cgpa: req.body.cgpa,
+    resume: req.file.path
   });
 
   const salt = await bcrypt.genSalt(10);
@@ -39,6 +54,7 @@ router.post("/", async (req, res) => {
     tenPercentage: stu.tenPercentage,
     twelvePercentage: stu.twelvePercentage,
     cgpa: stu.cgpa,
+    resume: stu.resume
   });
 });
 

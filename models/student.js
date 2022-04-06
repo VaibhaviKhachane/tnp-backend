@@ -51,7 +51,7 @@ const studentSchema = new mongoose.Schema({
     required: true
   },
   socialLinks: [String],
-
+  resume: String
   
 });
 
@@ -76,6 +76,7 @@ function validateStu(student) {
     twelvePercentage: Joi.number().min(0).max(100).required(),
     cgpa: Joi.number().required(),
     socialLinks: Joi.array(),
+    resume: Joi.string()
   });
   return schema.validate(student);
 }
