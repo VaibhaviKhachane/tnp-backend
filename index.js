@@ -15,6 +15,7 @@ mongoose.connect('mongodb://localhost/tnp',{config: {autoIndex: false}})
 .catch(err => console.log('Could not connect to MongoDB...'))
 
 app.use(express.json());
+app.use('/uploads',express.static('uploads'))
 app.use('/api/tpo', tpo);
 app.use('/api/stu', stu);
 app.use('/api/cmpny', cmpny);
