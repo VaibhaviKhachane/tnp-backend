@@ -8,6 +8,16 @@ const {
 } = require("../models/drive");
 const { Cmpny } = require("../models/cmpny");
 const { Student } = require("../models/student");
+const multer = require('multer');
+const storage = multer.diskStorage({
+  destination: function(req,file,cb){
+    cb(null, './public/');
+  },
+  filename: function(req,file,cb){
+    cb(null, new Date().toISOString().replace(/:/g, '-') + file.originalname);
+  }
+})
+const upload = multer({storage: storage});
 
 router.get("/", async (req, res) => {
   const drive = await Drive.find().sort("-endDate");
@@ -100,6 +110,13 @@ router.put("/:id", async (req, res) => {
   res.send(drive);
 });
 
+router.put('/selectedStu/:id', upload.single('selectedStudent'), async(req,res)=> {
+console.log(req.file);
+const drive = await Drive.findByIdAndUpdate(req.params.id, {
+  selectedStudent: req.file.path
+}, {new: true});
+res.send(drive);
+});
 router.delete("/:id", async (req, res) => {
   const drive = await Drive.findById(req.params.id);
   if (!drive)

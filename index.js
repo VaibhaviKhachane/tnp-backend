@@ -8,14 +8,22 @@ const logcmpny = require('./routes/logcmpny');
 const stu = require('./routes/regstu');
 const cmpny = require('./routes/regcmpny');
 const drive = require('./routes/drive');
-// const applied = require('./routes/appliedStu');
+
 
 mongoose.connect('mongodb://localhost/tnp',{config: {autoIndex: false}})
 .then(()=> console.log('Connected to MongoDB...'))
 .catch(err => console.log('Could not connect to MongoDB...'))
 
 app.use(express.json());
-app.use('/uploads',express.static('uploads'))
+
+//for getting uploaded resume/images write path in browser as 
+//http://localhost:3000/uploads/fileName(similar in uploads folder)
+app.use('/uploads',express.static('uploads'));
+
+//for downloading uploaded xlsx write path in browser as 
+//http://localhost:3000/uploads/fileName(similar in public folder)
+app.use('/public',express.static('public'));
+
 app.use('/api/tpo', tpo);
 app.use('/api/stu', stu);
 app.use('/api/cmpny', cmpny);
@@ -23,7 +31,7 @@ app.use('/api/logtpo',logtpo);
 app.use('/api/logstu',logstu);
 app.use('/api/logcmpny',logcmpny);
 app.use('/api/drive', drive);
-// app.use('/api/apply',applied);
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, ()=> console.log(`Listening on port ${port}...`));

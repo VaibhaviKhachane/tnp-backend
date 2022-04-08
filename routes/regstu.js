@@ -19,7 +19,7 @@ const upload = multer({storage: storage});
 //FOR REGISTRATION OF Student
 
 router.post("/", upload.single('resume'),async (req, res) => {
-  console.log(req.file);
+  
   const { error } = validateStu(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
