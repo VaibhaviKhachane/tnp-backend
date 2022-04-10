@@ -24,6 +24,13 @@ router.get("/", async (req, res) => {
   res.send(drive);
 });
 
+
+router.get('/:id',async (req,res)=>{
+  const drive = await Drive.findById(req.params.id);
+  if(!drive) return res.status(404).send("Not Found");
+  res.send(drive);
+});
+
 router.post("/", async (req, res) => {
   const { error } = validateDrive(req.body);
   if (error) return res.status(400).send(error.details[0].message);
