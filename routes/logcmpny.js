@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const Joi = require("joi");
+const auth = require("../middelware/auth");
 
 
 router.get('/', async(req,res) => {
@@ -10,6 +11,13 @@ router.get('/', async(req,res) => {
   res.send(cmpny);
 });
 
+//access given on the basis of token generated after login
+//need to send x-auth-token in header
+//while sending request
+router.get('/me',auth, async (req,res)=> {
+  const user = await Cmpny.findById(req.user._id).select('-password');
+  res.send(user);
+})
 
 router.post("/", async (req, res) => {
   const { error } = validate(req.body);
