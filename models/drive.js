@@ -1,8 +1,5 @@
-const { string } = require("joi");
 const Joi = require("joi");
 const mongoose = require("mongoose");
-const { cmpnySchema } = require("./cmpny");
-const {studentSchema} = require('./student');
 
 const driveSchema = new mongoose.Schema({
   title: {
