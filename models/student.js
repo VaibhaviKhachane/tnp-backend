@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi");
 const jwt = require("jsonwebtoken");
 const config = require("config");
-// const {driveSchema} = require('../models/drive');
+const {driveSchema} = require('../models/drive');
 
 const studentSchema = new mongoose.Schema({
   name: {
@@ -51,7 +51,8 @@ const studentSchema = new mongoose.Schema({
     required: true
   },
   socialLinks: [String],
-  resume: String
+  resume: String,
+  appliedDrive: [driveSchema]
   
 });
 
@@ -81,6 +82,25 @@ function validateStu(student) {
   return schema.validate(student);
 }
 
+function validateStuUpdate(student) {
+  const schema = Joi.object({
+    name: Joi.string().max(255).alphanum(),
+    email: Joi.string().min(5).max(255).email(),
+    password: Joi.string().min(8).max(255),
+    instituteName: Joi.string().min(3).max(255),
+    contactno: Joi.string().min(5).max(20),
+    tenPercentage: Joi.number().min(0).max(100),
+    twelvePercentage: Joi.number().min(0).max(100),
+    cgpa: Joi.number(),
+    socialLinks: Joi.array(),
+    resume: Joi.string(),
+    driveId: Joi.string()
+  });
+  return schema.validate(student);
+}
+
+
 exports.Student = Student;
 exports.studentSchema = studentSchema;
 exports.validateStu = validateStu;
+exports.validateStuUpdate = validateStuUpdate;
