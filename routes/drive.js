@@ -7,7 +7,7 @@ const {
   validateAppliedStu,
 } = require("../models/drive");
 const { Cmpny } = require("../models/cmpny");
-const { Student } = require("../models/student");
+const { Student, validateStuUpdate } = require("../models/student");
 const multer = require('multer');
 const storage = multer.diskStorage({
   destination: function(req,file,cb){
@@ -67,30 +67,59 @@ router.put("/appliedStudent/:id", async (req, res) => {
   const { error } = validateAppliedStu(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
+  const { er } = validateStuUpdate(req.body);
+  if (er) return res.status(400).send(error.details[0].message);
+
   const appliedStudent = await Student.findById(req.body.appliedStudentId);
   if (!appliedStudent) return res.status(400).send("Invalid Student");
 
-  const drive = await Drive.findByIdAndUpdate(
-    req.params.id,
-    {
-      $push: {
-        appliedStudent: {
-          _id: appliedStudent._id,
-          name: appliedStudent.name,
-          email: appliedStudent.email,
-          instituteName: appliedStudent.instituteName,
-          contactno: appliedStudent.contactno,
-          tenPercentage: appliedStudent.tenPercentage,
-          twelvePercentage: appliedStudent.twelvePercentage,
-          cgpa: appliedStudent.cgpa,
+  let flag = 0;
+  let i = 0;
+  const findStu = await Drive.findById(req.params.id);
+  const arr = findStu.appliedStudent;
+  for( i = 0; i < arr.length; i++){
+    if(arr[i]._id == req.body.appliedStudentId){
+      flag = 1;  
+    }
+  }
+
+  if(flag == 1){
+    return res.status(400).send('Already Exist')
+  }else {
+    const drive = await Drive.findByIdAndUpdate(
+      req.params.id,
+      {
+        $push: {
+          appliedStudent: {
+            _id: appliedStudent._id,
+            name: appliedStudent.name,
+            email: appliedStudent.email,
+            instituteName: appliedStudent.instituteName,
+            contactno: appliedStudent.contactno,
+            tenPercentage: appliedStudent.tenPercentage,
+            twelvePercentage: appliedStudent.twelvePercentage,
+            cgpa: appliedStudent.cgpa,
+          },
         },
       },
-    },
-    { new: true }
-  );
+      { new: true }
+    );
+    await Student.findByIdAndUpdate(req.body.appliedStudentId,{
+      $push:{
+        appliedDrive: {
+          _id: req.params.id,
+          title: drive.title,
+          cmpny: drive.cmpny
+        }
+      }
+    }, {new: true})
+    res.send(drive);
+  }
+  
 
-  res.send(drive);
+  
 });
+
 
 router.put("/:id", async (req, res) => {
   const { error } = validateDriveUpdate(req.body);
