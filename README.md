@@ -5,7 +5,7 @@ As an advantage of automation is increasing now many manual processes are going 
 
 ### Project uses Node.js, Express.js and MongoDb for Backend
 
-**For Frontend visit:** [Placement Keeda Backend](https://github.com/VaibhaviKhachane/placement-keeda)
+**For Frontend visit:** [Placement Keeda Frontend](https://github.com/VaibhaviKhachane/placement-keeda)
 
 **The proposed system helps to achieve the following:**
 
